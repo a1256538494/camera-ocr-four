@@ -1,0 +1,734 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>settingsform</class>
+ <widget class="QDialog" name="settingsform">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>780</width>
+    <height>520</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>系统设置</string>
+  </property>
+  <property name="modal">
+   <bool>true</bool>
+  </property>
+  <layout class="QVBoxLayout" name="rootLayout" stretch="1,0">
+   <property name="spacing">
+    <number>8</number>
+   </property>
+   <property name="leftMargin">
+    <number>10</number>
+   </property>
+   <property name="topMargin">
+    <number>10</number>
+   </property>
+   <property name="rightMargin">
+    <number>10</number>
+   </property>
+   <property name="bottomMargin">
+    <number>10</number>
+   </property>
+   <item>
+    <layout class="QHBoxLayout" name="bodyLayout" stretch="0,1">
+     <property name="spacing">
+      <number>10</number>
+     </property>
+     <item>
+      <widget class="QListWidget" name="navList">
+       <property name="minimumSize">
+        <size>
+         <width>150</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>180</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>11</pointsize>
+        </font>
+       </property>
+       <item>
+        <property name="text">
+         <string>Modbus 连接参数</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>日志与存图</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>相机源</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Modbus 映射（只读）</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>工位与界面</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+     <item>
+      <widget class="QStackedWidget" name="pages">
+       <property name="currentIndex">
+        <number>1</number>
+       </property>
+       <widget class="QWidget" name="pageAddress">
+        <layout class="QVBoxLayout" name="pageAddressLayout">
+         <item>
+          <widget class="QLabel" name="addressTitle">
+           <property name="styleSheet">
+            <string notr="true">font-size: 14pt; font-weight: 600;</string>
+           </property>
+           <property name="text">
+            <string>Modbus 连接参数</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="addressHint">
+           <property name="styleSheet">
+            <string notr="true">color: #666666;</string>
+           </property>
+           <property name="text">
+            <string>PLC / Modbus TCP 连接参数（IP、端口、是否启用）。当前阶段可不连，仅先落配置。</string>
+           </property>
+           <property name="wordWrap">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <layout class="QFormLayout" name="addressForm">
+           <property name="labelAlignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
+           <property name="horizontalSpacing">
+            <number>12</number>
+           </property>
+           <property name="verticalSpacing">
+            <number>10</number>
+           </property>
+           <item row="0" column="0">
+            <widget class="QLabel" name="plcIpLabel">
+             <property name="text">
+              <string>PLC IP</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1">
+            <widget class="QLineEdit" name="plcIpEdit">
+             <property name="text">
+              <string>127.0.0.1</string>
+             </property>
+             <property name="placeholderText">
+              <string>例如 192.168.1.10</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="0">
+            <widget class="QLabel" name="plcPortLabel">
+             <property name="text">
+              <string>端口</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1">
+            <widget class="QSpinBox" name="plcPortSpin">
+             <property name="minimum">
+              <number>1</number>
+             </property>
+             <property name="maximum">
+              <number>65535</number>
+             </property>
+             <property name="value">
+              <number>502</number>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="0">
+            <widget class="QLabel" name="modbusEnabledLabel">
+             <property name="text">
+              <string>启用连接</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="1">
+            <widget class="QCheckBox" name="modbusEnabledCheck">
+             <property name="text">
+              <string>启动后连接 PLC（未勾选则仅本地模拟触发）</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <spacer name="addressSpacer">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>40</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="pageStorage">
+        <layout class="QVBoxLayout" name="pageStorageLayout">
+         <item>
+          <widget class="QLabel" name="storageTitle">
+           <property name="styleSheet">
+            <string notr="true">font-size: 14pt; font-weight: 600;</string>
+           </property>
+           <property name="text">
+            <string>日志与存图</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="storageHint">
+           <property name="styleSheet">
+            <string notr="true">color: #666666;</string>
+           </property>
+           <property name="text">
+            <string>运行日志与 NG 截图落盘路径；建议使用绝对路径。日志目录修改后需重启程序生效。</string>
+           </property>
+           <property name="wordWrap">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <layout class="QFormLayout" name="storageForm">
+           <property name="labelAlignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
+           <property name="horizontalSpacing">
+            <number>12</number>
+           </property>
+           <property name="verticalSpacing">
+            <number>10</number>
+           </property>
+           <item row="0" column="0">
+            <widget class="QLabel" name="logPathLabel">
+             <property name="text">
+              <string>日志目录</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1">
+            <layout class="QHBoxLayout" name="logPathRow">
+             <item>
+              <widget class="QLineEdit" name="logPathEdit">
+               <property name="placeholderText">
+                <string>例如 D:/logs/modbusCamera</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="logPathBrowseBtn">
+               <property name="text">
+                <string>浏览…</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item row="1" column="0">
+            <widget class="QLabel" name="ngPathLabel">
+             <property name="text">
+              <string>NG 图片目录</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1">
+            <layout class="QHBoxLayout" name="ngPathRow">
+             <item>
+              <widget class="QLineEdit" name="ngPathEdit">
+               <property name="placeholderText">
+                <string>例如 D:/data/ng</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="ngPathBrowseBtn">
+               <property name="text">
+                <string>浏览…</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item row="2" column="0">
+            <widget class="QLabel" name="saveNgCheckLabel">
+             <property name="text">
+              <string>自动存 NG</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="1">
+            <widget class="QCheckBox" name="saveNgCheck">
+             <property name="text">
+              <string>检测为 NG 时自动保存标注图</string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <spacer name="storageSpacer">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>40</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="pageCamera">
+        <layout class="QVBoxLayout" name="pageCameraLayout">
+         <item>
+          <widget class="QLabel" name="cameraTitle">
+           <property name="styleSheet">
+            <string notr="true">font-size: 14pt; font-weight: 600;</string>
+           </property>
+           <property name="text">
+            <string>相机源</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="cameraHint">
+           <property name="styleSheet">
+            <string notr="true">color: #666666;</string>
+           </property>
+           <property name="text">
+            <string>为 Cam01–04 配置本地视频路径或工业相机索引（后续接入真实相机）。当前可先改测试视频路径。</string>
+           </property>
+           <property name="wordWrap">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <layout class="QFormLayout" name="cameraForm">
+           <property name="labelAlignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
+           <property name="horizontalSpacing">
+            <number>12</number>
+           </property>
+           <property name="verticalSpacing">
+            <number>8</number>
+           </property>
+           <item row="0" column="0">
+            <widget class="QLabel" name="cam1PathLabel">
+             <property name="text">
+              <string>Cam01 视频</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1">
+            <layout class="QHBoxLayout" name="cam1PathRow">
+             <item>
+              <widget class="QLineEdit" name="cam1PathEdit"/>
+             </item>
+             <item>
+              <widget class="QPushButton" name="cam1PathBrowseBtn">
+               <property name="text">
+                <string>浏览…</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item row="1" column="0">
+            <widget class="QLabel" name="cam2PathLabel">
+             <property name="text">
+              <string>Cam02 视频</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1">
+            <layout class="QHBoxLayout" name="cam2PathRow">
+             <item>
+              <widget class="QLineEdit" name="cam2PathEdit"/>
+             </item>
+             <item>
+              <widget class="QPushButton" name="cam2PathBrowseBtn">
+               <property name="text">
+                <string>浏览…</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item row="2" column="0">
+            <widget class="QLabel" name="cam3PathLabel">
+             <property name="text">
+              <string>Cam03 视频</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="1">
+            <layout class="QHBoxLayout" name="cam3PathRow">
+             <item>
+              <widget class="QLineEdit" name="cam3PathEdit"/>
+             </item>
+             <item>
+              <widget class="QPushButton" name="cam3PathBrowseBtn">
+               <property name="text">
+                <string>浏览…</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item row="3" column="0">
+            <widget class="QLabel" name="cam4PathLabel">
+             <property name="text">
+              <string>Cam04 视频</string>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="1">
+            <layout class="QHBoxLayout" name="cam4PathRow">
+             <item>
+              <widget class="QLineEdit" name="cam4PathEdit"/>
+             </item>
+             <item>
+              <widget class="QPushButton" name="cam4PathBrowseBtn">
+               <property name="text">
+                <string>浏览…</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <spacer name="cameraSpacer">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>40</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="pageModbusMap">
+        <layout class="QVBoxLayout" name="pageModbusMapLayout">
+         <item>
+          <widget class="QLabel" name="modbusMapTitle">
+           <property name="styleSheet">
+            <string notr="true">font-size: 14pt; font-weight: 600;</string>
+           </property>
+           <property name="text">
+            <string>Modbus 映射（只读）</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="modbusMapReadonlyBadge">
+           <property name="styleSheet">
+            <string notr="true">color: #8a5a00; background-color: #fff4d6; padding: 6px 8px; border-radius: 4px;</string>
+           </property>
+           <property name="text">
+            <string>本页只读：寄存器映射由程序约定，现场不可改，避免与触发地址冲突。</string>
+           </property>
+           <property name="wordWrap">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="modbusMapHint">
+           <property name="styleSheet">
+            <string notr="true">color: #666666;</string>
+           </property>
+           <property name="text">
+            <string>触发寄存器与各路结果寄存器一览（只读展示）。</string>
+           </property>
+           <property name="wordWrap">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <layout class="QFormLayout" name="modbusMapForm">
+           <property name="labelAlignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
+           <property name="horizontalSpacing">
+            <number>12</number>
+           </property>
+           <property name="verticalSpacing">
+            <number>8</number>
+           </property>
+           <item row="0" column="0">
+            <widget class="QLabel" name="slaveIdLabel">
+             <property name="text">
+              <string>从站 ID</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1">
+            <widget class="QSpinBox" name="slaveIdSpin">
+             <property name="readOnly">
+              <bool>true</bool>
+             </property>
+             <property name="buttonSymbols">
+              <enum>QAbstractSpinBox::NoButtons</enum>
+             </property>
+             <property name="minimum">
+              <number>1</number>
+             </property>
+             <property name="maximum">
+              <number>247</number>
+             </property>
+             <property name="value">
+              <number>1</number>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="0">
+            <widget class="QLabel" name="triggerAddrLabel">
+             <property name="text">
+              <string>触发寄存器</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1">
+            <widget class="QSpinBox" name="triggerAddrSpin">
+             <property name="readOnly">
+              <bool>true</bool>
+             </property>
+             <property name="buttonSymbols">
+              <enum>QAbstractSpinBox::NoButtons</enum>
+             </property>
+             <property name="maximum">
+              <number>65535</number>
+             </property>
+             <property name="value">
+              <number>101</number>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="0">
+            <widget class="QLabel" name="pollMsLabel">
+             <property name="text">
+              <string>轮询周期 ms</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="1">
+            <widget class="QSpinBox" name="pollMsSpin">
+             <property name="readOnly">
+              <bool>true</bool>
+             </property>
+             <property name="buttonSymbols">
+              <enum>QAbstractSpinBox::NoButtons</enum>
+             </property>
+             <property name="minimum">
+              <number>20</number>
+             </property>
+             <property name="maximum">
+              <number>5000</number>
+             </property>
+             <property name="singleStep">
+              <number>10</number>
+             </property>
+             <property name="value">
+              <number>100</number>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="0">
+            <widget class="QLabel" name="resultAddrHintLabel">
+             <property name="text">
+              <string>结果寄存器</string>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="1">
+            <widget class="QLabel" name="resultAddrPlaceholder">
+             <property name="styleSheet">
+              <string notr="true">color: #555555;</string>
+             </property>
+             <property name="text">
+              <string>Cam01→100　Cam02→102　Cam03→103　Cam04→104（勿占用触发 101）</string>
+             </property>
+             <property name="wordWrap">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <spacer name="modbusMapSpacer">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>40</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="pageStation">
+        <layout class="QVBoxLayout" name="pageStationLayout">
+         <item>
+          <widget class="QLabel" name="stationTitle">
+           <property name="styleSheet">
+            <string notr="true">font-size: 14pt; font-weight: 600;</string>
+           </property>
+           <property name="text">
+            <string>工位与界面</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="stationHint">
+           <property name="styleSheet">
+            <string notr="true">color: #666666;</string>
+           </property>
+           <property name="text">
+            <string>主界面展示用名称；不影响底层通信。</string>
+           </property>
+           <property name="wordWrap">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <layout class="QFormLayout" name="stationForm">
+           <property name="labelAlignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
+           <property name="horizontalSpacing">
+            <number>12</number>
+           </property>
+           <property name="verticalSpacing">
+            <number>10</number>
+           </property>
+           <item row="0" column="0">
+            <widget class="QLabel" name="stationNameLabel">
+             <property name="text">
+              <string>工位名称</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1">
+            <widget class="QLineEdit" name="stationNameEdit">
+             <property name="text">
+              <string>产线A</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="0">
+            <widget class="QLabel" name="layoutLabel">
+             <property name="text">
+              <string>默认布局</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1">
+            <widget class="QComboBox" name="layoutCombo">
+             <item>
+              <property name="text">
+               <string>2×2</string>
+              </property>
+             </item>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <spacer name="stationSpacer">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>40</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </widget>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Apply|QDialogButtonBox::Cancel|QDialogButtonBox::Ok|QDialogButtonBox::RestoreDefaults</set>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>rejected()</signal>
+   <receiver>settingsform</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>20</x>
+     <y>20</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>
