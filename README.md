@@ -1,81 +1,68 @@
-# modbusCamera
+# 文档目录（docs）
 
-使用Modbus TCP信号控制华睿工业相机采图，进行防伪检测和检测结果返回PLC。（QT框架+NCNN推理+Modbus通信）
+本目录存放 **多路总控 HMI** 相关设计与实现说明。  
+仓库根目录 [README.md](../README.md) 描述的是早期 **单路 Demo**（`modbusCamera` + 华睿/Modbus）；当前默认入口已切到多路总览。
 
+---
 
+## 当前产品形态（摘要）
 
-# 起
+| 项 | 说明 |
+|----|------|
+| 入口 | `main.cpp` → `main_interface`（多路总览） |
+| 相机数 | 4 路，宫格固定 **2×2** |
+| 视频 | `test_picture_video/test1.mp4` … `test4.mp4`（Cam01–04 一一对应） |
+| OCR | 独立线程；本地阶段 **100ms 模拟触发**（暂可不连 Modbus Slave） |
+| 详情 | 点击 Tile → `DetailView`（只订阅画面，不二次开流） |
+| 设置 | `settingsform` 应用模态对话框（主界面不隐藏、不可点） |
 
-需求是写代码的第一生产力，该仓库的创建是基于一个预研的项目。项目的具体需求是：检测客户使用样品上的条码是否符合生产厂家喷码时设定的规则，如果检测出样品条码不符合既定规则，则返回NG信号，如果检测出样品上的条码符合规则，则返回OK信号。后续再根据检测出的信号，对样品做出相应处理。（样品防伪检测）
+---
 
-设想的实现步骤为：在下位机(PLC)和上位机(工业相机)之间通过Modbus TCP建立通信，通过读特定寄存器地址上的数值来判定是否让工业相机进行采图和防伪检测，同时通过写特定寄存器地址上的数值来让PLC知道样品的真伪。
+## 架构速览
 
-本仓库完成以下功能：
+```text
+main_interface（壳：顶栏 / 空宫格容器 / 侧栏 / 底栏）
+  ├── CameraTileView ×4     ← camera_tile.ui，运行时装入 2×2
+  ├── CameraHub             ← 四路 VideoCapture
+  ├── OcrScheduler          ← 100ms 脉冲 → OcrWorker（QThread）
+  ├── HmiPresenter          ← 刷状态、汇总、事件列表
+  ├── DetailNavigator       ← hide 总览 ↔ DetailView
+  └── settingsform          ← 左导航 + QStackedWidget 多页
+```
 
-1. 与下位机（PLC)建立Modbus TCP通信，不间断地读取特定寄存器地址上的数值，通过该数值判断是否让工业相机进行拍照检测动作；（借助QT的Modbus库，建立TCP通信，使用"Modbus Slave"软件模拟PLC发送和接收信号）
-2. 工业相机根据拍照信号，获取当前待检测样品图像；（熟悉华睿工业相机的sdk，进行二次开发，完成图像的采集）
-3. 对待检测样品上的条码进行识别，通过设定规则判断识别的条码是否符合规范；(通过PaddleOCR4 进行条码字符识别，设定字符判定规则判定检测字符的真伪)
-4. 将检测结果通过写特定寄存器地址上数值的方式，将检测结果传送给下位机(PLC)，完成整个检测流程；（在QT中使用Modbus TCP库写寄存器）
-5. 设计一个可视化UI界面，通过按钮操作进行是否检测判定，同时可视化检测结果；(使用QT Create搭建整个项目，QT Designer绘制UI界面)
+**约定：** 四路 Tile 与详情共用 `CameraSession`，详情禁止再 `open` 一路流。
 
+---
 
+## 主要源码与界面
 
-# 承
+| 模块 | 文件 |
+|------|------|
+| 主壳 | `main_interface.h/.cpp/.ui` |
+| 宫格单元 | `camera_tile_view.*` + `camera_tile.ui` |
+| 采集 | `camera_hub.*`、`camera_session.h` |
+| OCR 调度/工人 | `ocr_scheduler.*`、`ocr_worker.*`、`ocrDetect.*` |
+| 详情 | `detail_view.*` + `detail_view.ui`、`detail_navigator.*` |
+| 设置 | `settingsform.*` + `settingsform.ui` |
+| UI 编排 | `hmi_presenter.*` |
+| 旧单路 Demo | `modbuscamera.*`（仍保留，默认不作为入口） |
 
-本仓库测试使用的软硬件：
+---
 
-- 硬件
+## 本地联调步骤
 
-  -华睿工业相机（型号:CE27743AAK00165) 
+1. 确认 `test_picture_video/` 下存在 `test1.mp4`–`test4.mp4`。  
+2. Qt Creator 打开 `modbusCamera.pro`，选用本机 Qt/OpenCV/NCNN 配置，**qmake + 编译**。  
+3. 运行后点 **全部开始**：四路应分别播对应测试视频；OCR 按模拟节拍出 OK/NG。  
+4. 点某一格进入详情；**设置** 打开模态配置窗（IP/日志路径等，持久化可后续接 ConfigService）。  
+5. **全部停止** 应停采集与新 OCR 投递（软停会 abort/断连，避免队列继续刷结果）。
 
-- 软件和库
+若从 `Bin/x64` 启动，请把 `test2`–`test4` 一并拷到运行目录的 `test_picture_video/`，或依赖工程绝对路径候选。
 
-  -Modbus Slave (用于模拟PLC，手头上没有)
+---
 
-  -Qt5.14.2 (MSVC 2017 64bit)
+## 相关路径
 
-  -opencv-3.4.10 
-
-  -ncnn-20240820-full-source
-
-本仓库最核心的设计算法逻辑为[modbuscamera.h](https://github.com/zhahoi/modbusCamera/blob/main/modbuscamera.h)和[modbuscamera.cpp](https://github.com/zhahoi/modbusCamera/blob/main/modbuscamera.cpp)，其他的.cpp和.h均为OCR识别和检测规则判定代码。
-
-
-
-# 转
-
-本仓库设计的UI界面如下：
-
-[![pA4shgs.jpg](https://s21.ax1x.com/2024/11/27/pA4shgs.jpg)](https://imgse.com/i/pA4shgs)
-
-当Modbus Slave中未设置拍照信号时，UI界面不会显示当前相机拍照的结果。
-
-[![pA4s4vn.jpg](https://s21.ax1x.com/2024/11/27/pA4s4vn.jpg)](https://imgse.com/i/pA4s4vn)
-
-当Modbus Slave中设置拍照信号时，UI界面会显示当前相机拍摄的图像，同时给出检测结果。Modbus Slave100位上的数字为返回给PLC的信号，数字为0表示未检测到字符，检测结果框内的⚪为黑白。
-
-[![pA4sIuq.jpg](https://s21.ax1x.com/2024/11/27/pA4sIuq.jpg)](https://imgse.com/i/pA4sIuq)
-
-Modbus Slave100位上的数字为1，则表示当前防伪检测OK，检测结果框内的⚪会变绿。
-
-[![pA4sTbV.jpg](https://s21.ax1x.com/2024/11/27/pA4sTbV.jpg)](https://imgse.com/i/pA4sTbV)
-
-Modbus Slave100位上的数字为2，则表示当前防伪检测NG，检测结果框内的⚪会变红。
-
-[![pA4soD0.jpg](https://s21.ax1x.com/2024/11/27/pA4soD0.jpg)](https://imgse.com/i/pA4soD0)
-
-注：按“停止检测”按钮之后再按“开始检测”按钮，可以继续检测流程。
-
-
-
-# 合
-
-本仓库的代码花费了我近一个月的时间，包括学习ModBus通信，如何使用QT和设计QT界面，如何对华睿工业相机SDK进行二次开发，如何使用ncnn框架部署Paddle OCR4字符检测算法和设定检测规则等，期间踩了很多很多的坑，也受益良多。十分感谢chatgpt，如果没有gpt以我现在的水平可能一年的时间也没办法把该仓库的demo弄出来。
-
-编写本仓库代码时也参考了一些github仓库，十分感谢他们开源的代码给我的实现带来了很多灵感，这里列出：
-
--[Defect-detection](https://github.com/fengzi666666/Defect-detection)
-
--[ncnn_paddleocrv4](https://github.com/XdpAreKid/ncnn_paddleocrv4)
-
-以上。
+- 测试视频：`../test_picture_video/`  
+- 工程文件：`../modbusCamera.pro`  
+- 权重等：`../weights/`（OCR 模型，以 `ocrDetect` 内路径为准）
